@@ -28,23 +28,13 @@ const renderCard = (title, body) =>
   );
 
 const renderHero = (caption, blurb) =>
-  header(
-    { class: "masthead" },
+  section(
+    { class: "jumbotron text-center" },
     div(
-      { class: "container h-100" },
-      div(
-        {
-          class:
-            "row h-100 align-items-center justify-content-center text-center"
-        },
-        div(
-          { class: "col-lg-10 align-self-end" },
-          h1({ class: "text-uppercase font-weight-bold" }, caption),
-          hr({ class: "divider my-4" })
-        ),
-        div(
-          { class: "col-lg-8 align-self-baseline" },
-          p({ class: "font-weight-light mb-5" }, blurb)
+      { class: "container" },
+          h1({ class: "jumbotron-heading" }, caption),
+          p({ class: "font-weight-light mb-5" }, blurb),
+
           /*a(
             {
               class: "btn btn-primary btn-xl",
@@ -52,9 +42,7 @@ const renderHero = (caption, blurb) =>
             },
             "Find Out More"
           )*/
-        )
-      )
-    )
+        )      
   );
 //section({class: "page-section"}, div({class: "container"},
 const renderContainer = ({ type, ...rest }) =>
