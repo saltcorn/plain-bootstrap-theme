@@ -16,7 +16,7 @@ const {
   nav,
   style
 } = require("saltcorn-markup/tags");
-const { navbar, alert } = require("saltcorn-markup/layout_utils");
+const { navbar, alert,navbarSolidOnScroll } = require("saltcorn-markup/layout_utils");
 
 const renderCard = (title, body) =>
   div(
@@ -30,7 +30,7 @@ const renderCard = (title, body) =>
 
 const renderHero = ({caption, blurb, backgroundImage}) =>
   section(
-    { class: "jumbotron min-vh-100 text-center m-0 bg-info d-flex flex-column justify-content-center" },
+    { class: "jumbotron text-center m-0 bg-info d-flex flex-column justify-content-center" },
     div(
       { class: "container" },
       h1({ class: "jumbotron-heading" }, caption),
@@ -44,7 +44,7 @@ const renderHero = ({caption, blurb, backgroundImage}) =>
     backgroundImage && style(`.jumbotron {
       background-image: url("${backgroundImage}");
       background-size: cover;
-      height: 100%;
+      min-height: 75vh !important;
     }`)
   );
 
@@ -137,7 +137,7 @@ const wrap = ({
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <!-- Font Awesome icons (free version)-->
     <script src="https://use.fontawesome.com/releases/v5.13.0/js/all.js" crossorigin="anonymous"></script>
-    <link href="https://stackpath.bootstrapcdn.com/bootswatch/4.5.0/litera/bootstrap.min.css" rel="stylesheet" integrity="sha384-Gr51humlTz50RfCwdBYgT+XvbSZqkm8Loa5nWlNrvUqCinoe6C6WUZKHS2WIRx5o" crossorigin="anonymous">
+    <link href="https://stackpath.bootstrapcdn.com/bootswatch/4.5.0/united/bootstrap.min.css" rel="stylesheet" integrity="sha384-Uga2yStKRHUWCS7ORqIZhJ9LIAv4i7gZuEdoR1QAmw6H+ffhcf7yCOd0CvSoNwoz" crossorigin="anonymous">
     <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
     ${headers
       .filter(h => h.css)
@@ -162,6 +162,7 @@ const wrap = ({
       .filter(h => h.script)
       .map(h => `<script src="${h.script}"></script>`)
       .join("")}
+    ${navbarSolidOnScroll}
   </body>
 </html>`;
 
