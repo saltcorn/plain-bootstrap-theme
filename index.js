@@ -15,7 +15,7 @@ const {
   button,
   nav
 } = require("saltcorn-markup/tags");
-const {navbar, alert} = require("saltcorn-markup/layout_utils");
+const { navbar, alert } = require("saltcorn-markup/layout_utils");
 
 const renderCard = (title, body) =>
   div(
@@ -32,19 +32,22 @@ const renderHero = (caption, blurb) =>
     { class: "jumbotron text-center" },
     div(
       { class: "container" },
-          h1({ class: "jumbotron-heading" }, caption),
-          p({ class: "font-weight-light mb-5" }, blurb),
+      h1({ class: "jumbotron-heading" }, caption),
+      p({ class: "font-weight-light mb-5" }, blurb)
 
-          /*a(
-            {
-              class: "btn btn-primary btn-xl",
-              href: "#about"
-            },
-            "Find Out More"
+      /*p (
+            a ({ href: "#", class: "btn btn-primary my-2" }, "Main call to action"),
+            a ({ href: "#", class: "btn btn-secondary my-2" }, "Secondary action")
           )*/
-        )      
+    )
   );
-//section({class: "page-section"}, div({class: "container"},
+
+const renderTitle = ({ title, blurb }) =>
+  div(
+    h1({ class: "h3 mb-0 mt-2 text-gray-800" }, title),
+    blurb && p({ class: "mb-0 text-gray-800" }, blurb)
+  );
+
 const renderContainer = ({ type, ...rest }) =>
   type === "card"
     ? renderCard(rest.title, rest.contents)
@@ -52,6 +55,8 @@ const renderContainer = ({ type, ...rest }) =>
     ? renderHero(rest.caption, rest.blurb)
     : type === "blank"
     ? rest.contents
+    : type === "pageHeader"
+    ? renderTitle(rest)
     : "";
 
 const renderBesides = elems => {
@@ -70,31 +75,45 @@ const renderAbove = elems =>
     .map(e => (e.besides ? renderBesides(e.besides) : renderContainer(e)))
     .join("");
 
-const renderAbovePrimary = elems =>
+const renderAbovePrimary = (elems, alerts) =>
   elems
-    .map(e =>
-      e.besides
+    .map((e, ix) =>
+      e.type === "hero"
+        ? renderContainer(e)
+        : e.besides
         ? section(
-            { class: ["page-section", e.class, e.invertColor && "bg-primary"] },
-            div({ class: "container" }, renderBesides(e.besides))
+            {
+              class: [
+                "page-section",
+                ix === 0 && "mt-5",
+                e.class,
+                e.invertColor && "bg-primary"
+              ]
+            },
+            div({ class: "container" },  ix===0 && alerts.map(a => alert(a.type, a.msg)), renderBesides(e.besides))
           )
-        : renderContainer(e)
+        : div(
+            { class: ["container", ix === 0 && "mt-5"] },
+            div(
+              { class: "row" },
+              div({ class: "col-sm-12" }, ix===0 && alerts.map(a => alert(a.type, a.msg)), renderContainer(e))
+            )
+          )
     )
     .join("");
 
-const renderBody = (title, body) =>
-  [
-    body.pageHeader
-      ? h1({ class: "h3 mb-0 mt-2 text-gray-800" }, body.pageHeader)
-      : "",
-    body.pageBlurb ? p({ class: "mb-0 text-gray-800" }, body.pageBlurb) : "",
-    typeof body === "string"
-      ? renderCard(title, body)
-      : body.above
-      ? renderAbovePrimary(body.above)
-      : renderBesides(body.besides)
-  ].join("");
-
+const renderBody = (title, body, alerts) =>
+  typeof body === "string"
+    ? div(
+        { class: "container mt-5" },
+        div(
+          { class: "row" },
+          div({ class: "col-sm-12" }, alerts.map(a => alert(a.type, a.msg)), renderCard(title, body))
+        )
+      )
+    : body.above
+    ? renderAbovePrimary(body.above, alerts)
+    : renderBesides(body.besides);
 
 const wrap = ({
   title,
@@ -123,8 +142,7 @@ const wrap = ({
   <body id="page-top">
     <div id="wrapper">
       ${navbar(brand, menu, currentUrl)}
-      ${alerts.map(a => alert(a.type, a.msg)).join("")}
-      ${renderBody(title, body)}
+      ${renderBody(title, body, alerts)}
     </div>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
@@ -140,7 +158,5 @@ const wrap = ({
       .join("")}
   </body>
 </html>`;
-
-
 
 module.exports = { sc_plugin_api_version: 1, layout: { wrap } };
