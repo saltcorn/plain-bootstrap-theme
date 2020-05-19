@@ -13,7 +13,8 @@ const {
   header,
   section,
   button,
-  nav
+  nav,
+  style
 } = require("saltcorn-markup/tags");
 const { navbar, alert } = require("saltcorn-markup/layout_utils");
 
@@ -27,19 +28,24 @@ const renderCard = (title, body) =>
     div({ class: "card-body" }, Array.isArray(body) ? body.join("") : body)
   );
 
-const renderHero = (caption, blurb) =>
+const renderHero = ({caption, blurb, backgroundImage}) =>
   section(
-    { class: "jumbotron text-center" },
+    { class: "jumbotron min-vh-100 text-center m-0 bg-info d-flex flex-column justify-content-center" },
     div(
       { class: "container" },
       h1({ class: "jumbotron-heading" }, caption),
-      p({ class: "font-weight-light mb-5" }, blurb)
+      p({ class: "lead" }, blurb)
 
       /*p (
             a ({ href: "#", class: "btn btn-primary my-2" }, "Main call to action"),
             a ({ href: "#", class: "btn btn-secondary my-2" }, "Secondary action")
           )*/
-    )
+    ),
+    backgroundImage && style(`.jumbotron {
+      background-image: url("${backgroundImage}");
+      background-size: cover;
+      height: 100%;
+    }`)
   );
 
 const renderTitle = ({ title, blurb }) =>
@@ -52,7 +58,7 @@ const renderContainer = ({ type, ...rest }) =>
   type === "card"
     ? renderCard(rest.title, rest.contents)
     : type === "hero"
-    ? renderHero(rest.caption, rest.blurb)
+    ? renderHero(rest)
     : type === "blank"
     ? rest.contents
     : type === "pageHeader"
