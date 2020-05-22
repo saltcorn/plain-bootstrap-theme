@@ -15,8 +15,8 @@ const {
   button,
   nav,
   style
-} = require("saltcorn-markup/tags");
-const { navbar, alert,navbarSolidOnScroll } = require("saltcorn-markup/layout_utils");
+} = require("@saltcorn/markup/tags");
+const { navbar, alert,navbarSolidOnScroll } = require("@saltcorn/markup/layout_utils");
 
 const renderCard = (title, body) =>
   div(
