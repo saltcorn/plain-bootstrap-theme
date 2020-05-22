@@ -1,5 +1,5 @@
 {
-  "name": "saltcorn-plain-bootstrap",
+  "name": "@saltcorn/plain-bootstrap-theme",
   "version": "0.0.1",
   "description": "Plain bootstrap layout plugin",
   "main": "index.js",
@@ -7,7 +7,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "saltcorn-markup": "^0.0.1"
+    "@saltcorn/markup": "^0.0.1"
   },
   "author": "Tom Nielsen",
   "license": "MIT",
