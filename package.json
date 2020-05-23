@@ -1,6 +1,6 @@
 {
   "name": "@saltcorn/plain-bootstrap-theme",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Plain bootstrap layout plugin",
   "main": "index.js",
   "scripts": {
