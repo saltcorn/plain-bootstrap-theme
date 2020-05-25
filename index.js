@@ -28,14 +28,14 @@ const renderCard = (title, body) =>
     div({ class: "card-body" }, Array.isArray(body) ? body.join("") : body)
   );
 
-const renderHero = ({caption, blurb, backgroundImage}) =>
+const renderHero = ({caption, blurb, backgroundImage, cta}) =>
   section(
     { class: "jumbotron text-center m-0 bg-info d-flex flex-column justify-content-center" },
     div(
       { class: "container" },
       h1({ class: "jumbotron-heading" }, caption),
-      p({ class: "lead" }, blurb)
-
+      p({ class: "lead" }, blurb),
+      cta
       /*p (
             a ({ href: "#", class: "btn btn-primary my-2" }, "Main call to action"),
             a ({ href: "#", class: "btn btn-secondary my-2" }, "Secondary action")
