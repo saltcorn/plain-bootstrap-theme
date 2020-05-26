@@ -10,18 +10,19 @@ const {
   h6,
   h1,
   p,
-  header,
+  pre,
+  footer,
   section,
   button,
   nav,
-  style
+  style,
 } = require("@saltcorn/markup/tags");
 const { navbar, alert,navbarSolidOnScroll } = require("@saltcorn/markup/layout_utils");
 
 const renderCard = (title, body) =>
   div(
     { class: "card shadow mt-4" },
-    div(
+    title && div(
       { class: "card-header py-3" },
       h6({ class: "m-0 font-weight-bold text-primary" }, text(title))
     ),
@@ -54,15 +55,27 @@ const renderTitle = ({ title, blurb }) =>
     blurb && p({ class: "mb-0 text-gray-800" }, blurb)
   );
 
+const renderFooter = ({ contents }) =>{
+  return div({class:"container"}, footer({id:"footer"}, div({class:"row"},
+   div({class:"col-sm-12"}, contents)
+  )));
+}
+
 const renderContainer = ({ type, ...rest }) =>
   type === "card"
     ? renderCard(rest.title, rest.contents)
     : type === "hero"
     ? renderHero(rest)
+    : type === "footer"
+    ? renderFooter(rest)
+
     : type === "blank"
     ? rest.contents
+  
     : type === "pageHeader"
     ? renderTitle(rest)
+
+
     : "";
 
 const renderBesides = elems => {
@@ -84,7 +97,7 @@ const renderAbove = elems =>
 const renderAbovePrimary = (elems, alerts) =>
   elems
     .map((e, ix) =>
-      e.type === "hero"
+      e.type === "hero" || e.type === "footer" 
         ? renderContainer(e)
         : e.besides
         ? section(
