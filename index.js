@@ -78,11 +78,11 @@ const renderContainer = ({ type, ...rest }) =>
 
     : "";
 
-const renderBesides = elems => {
-  const w = Math.round(12 / elems.length);
-  const row = elems.map(e =>
+const renderBesides = ({besides, widths}) => {
+  const w = Math.round(12 / besides.length);
+  const row = besides.map((e,ix) =>
     div(
-      { class: `col-sm-${w}` },
+      { class: `col-sm-${widths? widths[ix]: w}` },
       e.above ? renderAbove(e.above) : renderContainer(e)
     )
   );
@@ -91,7 +91,7 @@ const renderBesides = elems => {
 
 const renderAbove = elems =>
   elems
-    .map(e => (e.besides ? renderBesides(e.besides) : renderContainer(e)))
+    .map(e => (e.besides ? renderBesides(e) : renderContainer(e)))
     .join("");
 
 const renderAbovePrimary = (elems, alerts) =>
@@ -109,7 +109,7 @@ const renderAbovePrimary = (elems, alerts) =>
                 e.invertColor && "bg-primary"
               ]
             },
-            div({ class: "container" },  ix===0 && alerts.map(a => alert(a.type, a.msg)), renderBesides(e.besides))
+            div({ class: "container" },  ix===0 && alerts.map(a => alert(a.type, a.msg)), renderBesides(e))
           )
         : div(
             { class: ["container", ix === 0 && "mt-5"] },
@@ -132,7 +132,7 @@ const renderBody = (title, body, alerts) =>
       )
     : body.above
     ? renderAbovePrimary(body.above, alerts)
-    : renderBesides(body.besides);
+    : renderBesides(body);
 
 const wrap = ({
   title,
