@@ -7,7 +7,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@saltcorn/markup": "^0.0.5"
+    "@saltcorn/markup": "^0.0.6"
   },
   "author": "Tom Nielsen",
   "license": "MIT",
