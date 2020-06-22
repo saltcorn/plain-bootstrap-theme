@@ -32,19 +32,6 @@ const blockDispatch = {
       h1({ class: "h3 mb-0 mt-2 text-gray-800" }, title),
       blurb && p({ class: "mb-0 text-gray-800" }, blurb)
     ),
-  card: ({ title, contents }) =>
-    div(
-      { class: "card shadow mt-4" },
-      title &&
-        div(
-          { class: "card-header py-3" },
-          h6({ class: "m-0 font-weight-bold text-primary" }, text(title))
-        ),
-      div(
-        { class: "card-body" },
-        Array.isArray(contents) ? contents.join("") : contents
-      )
-    ),
   footer: ({ contents }) =>
     div(
       { class: "container" },
@@ -91,25 +78,8 @@ const blockDispatch = {
         )
 };
 
-const makeSegments = (title, body, alerts) => {
-  const alertsSegments = alerts && alerts.length>0
-    ? [{ type: "blank", contents: alerts.map(a => alert(a.type, a.msg)) }]
-    : [];
-  if (typeof body === "string")
-    return {
-      above: [...alertsSegments, { type: "card", title, contents: body }]
-    };
-  else if (body.above) {
-    if (alerts&& alerts.length>0) body.above.unshift(alertsSegments[0]);
-    return body;
-  } else {
-    if (alerts&& alerts.length>0) return { above: [...alertsSegments, body] };
-    else return body;
-  }
-};
-
 const renderBody = (title, body, alerts) =>
-  renderLayout(blockDispatch)(makeSegments(title, body, alerts));
+  renderLayout(blockDispatch)({layout: body, title, alerts});
 
 const wrap = ({
   title,
