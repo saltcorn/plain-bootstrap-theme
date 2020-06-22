@@ -13,11 +13,13 @@ const {
   pre,
   footer,
   section,
+  header,
   button,
   nav,
   style,
 } = require("@saltcorn/markup/tags");
 const { navbar, alert,navbarSolidOnScroll } = require("@saltcorn/markup/layout_utils");
+const renderLayout = require("@saltcorn/markup/layout");
 
 const renderCard = (title, body) =>
   div(
@@ -121,7 +123,7 @@ const renderAbovePrimary = (elems, alerts) =>
     )
     .join("");
 
-const renderBody = (title, body, alerts) =>
+const renderBody1 = (title, body, alerts) =>
   typeof body === "string"
     ? div(
         { class: "container mt-5" },
@@ -133,6 +135,74 @@ const renderBody = (title, body, alerts) =>
     : body.above
     ? renderAbovePrimary(body.above, alerts)
     : renderBesides(body);
+
+const blockDispatch = {
+  pageHeader: ({ title, blurb }) =>
+    div(
+      h1({ class: "h3 mb-0 mt-2 text-gray-800" }, title),
+      blurb && p({ class: "mb-0 text-gray-800" }, blurb)
+    ),
+  card: ({ title, contents }) =>
+    div(
+      { class: "card shadow mt-4" },
+      title && div(
+        { class: "card-header py-3" },
+        h6({ class: "m-0 font-weight-bold text-primary" }, text(title))
+      ),
+      div(
+        { class: "card-body" },
+        Array.isArray(contents) ? contents.join("") : contents
+      )
+    ),
+  footer: ({ contents }) =>
+    div(
+      { class: "container" },
+      footer(
+        { id: "footer" },
+        div({ class: "row" }, div({ class: "col-sm-12" }, contents))
+      )
+    ),
+  hero: ({ caption, blurb, cta, backgroundImage }) =>
+  section(
+    { class: "jumbotron text-center m-0 bg-info d-flex flex-column justify-content-center" },
+    div(
+      { class: "container" },
+      h1({ class: "jumbotron-heading" }, caption),
+      p({ class: "lead" }, blurb),
+      cta
+      /*p (
+            a ({ href: "#", class: "btn btn-primary my-2" }, "Main call to action"),
+            a ({ href: "#", class: "btn btn-secondary my-2" }, "Secondary action")
+          )*/
+    ),
+    backgroundImage && style(`.jumbotron {
+      background-image: url("${backgroundImage}");
+      background-size: cover;
+      min-height: 75vh !important;
+    }`)),
+  wrapTop: (segment, ix, s)=>
+  ["hero", "footer"].includes(segment.type) ? s :
+  section(
+    {
+      class: [
+        "page-section",
+        ix === 0 && "mt-5",
+        segment.class,
+        segment.invertColor && "bg-primary"
+      ]
+    }, div(
+      { class: ["container"] },
+      div(
+        { class: "row" },
+        div({ class: "col-sm-12" }, s)
+      )
+    ))
+};
+const renderBody = (title, body, alerts) =>
+  renderLayout(blockDispatch)(
+    typeof body === "string" ? { type: "card", title, contents: body } : body
+  );
+
 
 const wrap = ({
   title,
