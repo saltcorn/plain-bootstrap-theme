@@ -1,138 +1,77 @@
 const {
-  ul,
-  li,
-  a,
-  span,
-  hr,
   div,
   text,
-  i,
-  h6,
   h1,
   p,
-  pre,
   footer,
   section,
-  button,
-  nav,
-  style,
+  style
 } = require("@saltcorn/markup/tags");
-const { navbar, alert,navbarSolidOnScroll } = require("@saltcorn/markup/layout_utils");
+const {
+  navbar,
+  navbarSolidOnScroll
+} = require("@saltcorn/markup/layout_utils");
+const renderLayout = require("@saltcorn/markup/layout");
 
-const renderCard = (title, body) =>
-  div(
-    { class: "card shadow mt-4" },
-    title && div(
-      { class: "card-header py-3" },
-      h6({ class: "m-0 font-weight-bold text-primary" }, text(title))
+const blockDispatch = {
+  pageHeader: ({ title, blurb }) =>
+    div(
+      h1({ class: "h3 mb-0 mt-2 text-gray-800" }, title),
+      blurb && p({ class: "mb-0 text-gray-800" }, blurb)
     ),
-    div({ class: "card-body" }, Array.isArray(body) ? body.join("") : body)
-  );
-
-const renderHero = ({caption, blurb, backgroundImage, cta}) =>
-  section(
-    { class: "jumbotron text-center m-0 bg-info d-flex flex-column justify-content-center" },
+  footer: ({ contents }) =>
     div(
       { class: "container" },
-      h1({ class: "jumbotron-heading" }, caption),
-      p({ class: "lead" }, blurb),
-      cta
-      /*p (
-            a ({ href: "#", class: "btn btn-primary my-2" }, "Main call to action"),
-            a ({ href: "#", class: "btn btn-secondary my-2" }, "Secondary action")
-          )*/
+      footer(
+        { id: "footer" },
+        div({ class: "row" }, div({ class: "col-sm-12" }, contents))
+      )
     ),
-    backgroundImage && style(`.jumbotron {
+  hero: ({ caption, blurb, cta, backgroundImage }) =>
+    section(
+      {
+        class:
+          "jumbotron text-center m-0 bg-info d-flex flex-column justify-content-center"
+      },
+      div(
+        { class: "container" },
+        h1({ class: "jumbotron-heading" }, caption),
+        p({ class: "lead" }, blurb),
+        cta
+      ),
+      backgroundImage &&
+        style(`.jumbotron {
       background-image: url("${backgroundImage}");
       background-size: cover;
       min-height: 75vh !important;
     }`)
-  );
-
-const renderTitle = ({ title, blurb }) =>
-  div(
-    h1({ class: "h3 mb-0 mt-2 text-gray-800" }, title),
-    blurb && p({ class: "mb-0 text-gray-800" }, blurb)
-  );
-
-const renderFooter = ({ contents }) =>{
-  return div({class:"container"}, footer({id:"footer"}, div({class:"row"},
-   div({class:"col-sm-12"}, contents)
-  )));
-}
-
-const renderContainer = ({ type, ...rest }) =>
-  type === "card"
-    ? renderCard(rest.title, rest.contents)
-    : type === "hero"
-    ? renderHero(rest)
-    : type === "footer"
-    ? renderFooter(rest)
-
-    : type === "blank"
-    ? rest.contents
-  
-    : type === "pageHeader"
-    ? renderTitle(rest)
-
-
-    : "";
-
-const renderBesides = ({besides, widths}) => {
-  const w = Math.round(12 / besides.length);
-  const row = besides.map((e,ix) =>
-    div(
-      { class: `col-sm-${widths? widths[ix]: w}` },
-      e.above ? renderAbove(e.above) : renderContainer(e)
-    )
-  );
-  return div({ class: "row" }, row);
+    ),
+  wrapTop: (segment, ix, s) =>
+    ["hero", "footer"].includes(segment.type)
+      ? s
+      : section(
+          {
+            class: [
+              "page-section",
+              ix === 0 && "mt-5",
+              segment.class,
+              segment.invertColor && "bg-primary"
+            ]
+          },
+          div(
+            { class: ["container"] },
+            div({ class: "row" }, div({ class: "col-sm-12" }, s))
+          )
+        )
 };
 
-const renderAbove = elems =>
-  elems
-    .map(e => (e.besides ? renderBesides(e) : renderContainer(e)))
-    .join("");
-
-const renderAbovePrimary = (elems, alerts) =>
-  elems
-    .map((e, ix) =>
-      e.type === "hero" || e.type === "footer" 
-        ? renderContainer(e)
-        : e.besides
-        ? section(
-            {
-              class: [
-                "page-section",
-                ix === 0 && "mt-5",
-                e.class,
-                e.invertColor && "bg-primary"
-              ]
-            },
-            div({ class: "container" },  ix===0 && alerts.map(a => alert(a.type, a.msg)), renderBesides(e))
-          )
-        : div(
-            { class: ["container", ix === 0 && "mt-5"] },
-            div(
-              { class: "row" },
-              div({ class: "col-sm-12" }, ix===0 && alerts.map(a => alert(a.type, a.msg)), renderContainer(e))
-            )
-          )
-    )
-    .join("");
-
 const renderBody = (title, body, alerts) =>
-  typeof body === "string"
-    ? div(
-        { class: "container mt-5" },
-        div(
-          { class: "row" },
-          div({ class: "col-sm-12" }, alerts.map(a => alert(a.type, a.msg)), renderCard(title, body))
-        )
-      )
-    : body.above
-    ? renderAbovePrimary(body.above, alerts)
-    : renderBesides(body);
+  renderLayout({
+    blockDispatch,
+    layout:
+      typeof body === "string" ? { type: "card", title, contents: body } : body,
+    alerts
+  });
 
 const wrap = ({
   title,
