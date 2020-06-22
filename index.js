@@ -1,30 +1,17 @@
 const {
-  ul,
-  li,
-  a,
-  span,
-  hr,
   div,
   text,
-  i,
-  h6,
   h1,
   p,
-  pre,
   footer,
   section,
-  header,
-  button,
-  nav,
   style
 } = require("@saltcorn/markup/tags");
 const {
   navbar,
-  alert,
   navbarSolidOnScroll
 } = require("@saltcorn/markup/layout_utils");
 const renderLayout = require("@saltcorn/markup/layout");
-
 
 const blockDispatch = {
   pageHeader: ({ title, blurb }) =>
@@ -79,7 +66,11 @@ const blockDispatch = {
 };
 
 const renderBody = (title, body, alerts) =>
-  renderLayout(blockDispatch)({layout: body, title, alerts});
+  renderLayout(blockDispatch)({
+    layout:
+      typeof body === "string" ? { type: "card", title, contents: body } : body,
+    alerts
+  });
 
 const wrap = ({
   title,
