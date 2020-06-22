@@ -16,24 +16,32 @@ const {
   header,
   button,
   nav,
-  style,
+  style
 } = require("@saltcorn/markup/tags");
-const { navbar, alert,navbarSolidOnScroll } = require("@saltcorn/markup/layout_utils");
+const {
+  navbar,
+  alert,
+  navbarSolidOnScroll
+} = require("@saltcorn/markup/layout_utils");
 const renderLayout = require("@saltcorn/markup/layout");
 
 const renderCard = (title, body) =>
   div(
     { class: "card shadow mt-4" },
-    title && div(
-      { class: "card-header py-3" },
-      h6({ class: "m-0 font-weight-bold text-primary" }, text(title))
-    ),
+    title &&
+      div(
+        { class: "card-header py-3" },
+        h6({ class: "m-0 font-weight-bold text-primary" }, text(title))
+      ),
     div({ class: "card-body" }, Array.isArray(body) ? body.join("") : body)
   );
 
-const renderHero = ({caption, blurb, backgroundImage, cta}) =>
+const renderHero = ({ caption, blurb, backgroundImage, cta }) =>
   section(
-    { class: "jumbotron text-center m-0 bg-info d-flex flex-column justify-content-center" },
+    {
+      class:
+        "jumbotron text-center m-0 bg-info d-flex flex-column justify-content-center"
+    },
     div(
       { class: "container" },
       h1({ class: "jumbotron-heading" }, caption),
@@ -44,7 +52,8 @@ const renderHero = ({caption, blurb, backgroundImage, cta}) =>
             a ({ href: "#", class: "btn btn-secondary my-2" }, "Secondary action")
           )*/
     ),
-    backgroundImage && style(`.jumbotron {
+    backgroundImage &&
+      style(`.jumbotron {
       background-image: url("${backgroundImage}");
       background-size: cover;
       min-height: 75vh !important;
@@ -57,11 +66,15 @@ const renderTitle = ({ title, blurb }) =>
     blurb && p({ class: "mb-0 text-gray-800" }, blurb)
   );
 
-const renderFooter = ({ contents }) =>{
-  return div({class:"container"}, footer({id:"footer"}, div({class:"row"},
-   div({class:"col-sm-12"}, contents)
-  )));
-}
+const renderFooter = ({ contents }) => {
+  return div(
+    { class: "container" },
+    footer(
+      { id: "footer" },
+      div({ class: "row" }, div({ class: "col-sm-12" }, contents))
+    )
+  );
+};
 
 const renderContainer = ({ type, ...rest }) =>
   type === "card"
@@ -70,21 +83,17 @@ const renderContainer = ({ type, ...rest }) =>
     ? renderHero(rest)
     : type === "footer"
     ? renderFooter(rest)
-
     : type === "blank"
     ? rest.contents
-  
     : type === "pageHeader"
     ? renderTitle(rest)
-
-
     : "";
 
-const renderBesides = ({besides, widths}) => {
+const renderBesides = ({ besides, widths }) => {
   const w = Math.round(12 / besides.length);
-  const row = besides.map((e,ix) =>
+  const row = besides.map((e, ix) =>
     div(
-      { class: `col-sm-${widths? widths[ix]: w}` },
+      { class: `col-sm-${widths ? widths[ix] : w}` },
       e.above ? renderAbove(e.above) : renderContainer(e)
     )
   );
@@ -92,14 +101,12 @@ const renderBesides = ({besides, widths}) => {
 };
 
 const renderAbove = elems =>
-  elems
-    .map(e => (e.besides ? renderBesides(e) : renderContainer(e)))
-    .join("");
+  elems.map(e => (e.besides ? renderBesides(e) : renderContainer(e))).join("");
 
 const renderAbovePrimary = (elems, alerts) =>
   elems
     .map((e, ix) =>
-      e.type === "hero" || e.type === "footer" 
+      e.type === "hero" || e.type === "footer"
         ? renderContainer(e)
         : e.besides
         ? section(
@@ -111,13 +118,21 @@ const renderAbovePrimary = (elems, alerts) =>
                 e.invertColor && "bg-primary"
               ]
             },
-            div({ class: "container" },  ix===0 && alerts.map(a => alert(a.type, a.msg)), renderBesides(e))
+            div(
+              { class: "container" },
+              ix === 0 && alerts.map(a => alert(a.type, a.msg)),
+              renderBesides(e)
+            )
           )
         : div(
             { class: ["container", ix === 0 && "mt-5"] },
             div(
               { class: "row" },
-              div({ class: "col-sm-12" }, ix===0 && alerts.map(a => alert(a.type, a.msg)), renderContainer(e))
+              div(
+                { class: "col-sm-12" },
+                ix === 0 && alerts.map(a => alert(a.type, a.msg)),
+                renderContainer(e)
+              )
             )
           )
     )
@@ -129,7 +144,11 @@ const renderBody1 = (title, body, alerts) =>
         { class: "container mt-5" },
         div(
           { class: "row" },
-          div({ class: "col-sm-12" }, alerts.map(a => alert(a.type, a.msg)), renderCard(title, body))
+          div(
+            { class: "col-sm-12" },
+            alerts.map(a => alert(a.type, a.msg)),
+            renderCard(title, body)
+          )
         )
       )
     : body.above
@@ -145,10 +164,11 @@ const blockDispatch = {
   card: ({ title, contents }) =>
     div(
       { class: "card shadow mt-4" },
-      title && div(
-        { class: "card-header py-3" },
-        h6({ class: "m-0 font-weight-bold text-primary" }, text(title))
-      ),
+      title &&
+        div(
+          { class: "card-header py-3" },
+          h6({ class: "m-0 font-weight-bold text-primary" }, text(title))
+        ),
       div(
         { class: "card-body" },
         Array.isArray(contents) ? contents.join("") : contents
@@ -163,46 +183,50 @@ const blockDispatch = {
       )
     ),
   hero: ({ caption, blurb, cta, backgroundImage }) =>
-  section(
-    { class: "jumbotron text-center m-0 bg-info d-flex flex-column justify-content-center" },
-    div(
-      { class: "container" },
-      h1({ class: "jumbotron-heading" }, caption),
-      p({ class: "lead" }, blurb),
-      cta
-      /*p (
+    section(
+      {
+        class:
+          "jumbotron text-center m-0 bg-info d-flex flex-column justify-content-center"
+      },
+      div(
+        { class: "container" },
+        h1({ class: "jumbotron-heading" }, caption),
+        p({ class: "lead" }, blurb),
+        cta
+        /*p (
             a ({ href: "#", class: "btn btn-primary my-2" }, "Main call to action"),
             a ({ href: "#", class: "btn btn-secondary my-2" }, "Secondary action")
           )*/
-    ),
-    backgroundImage && style(`.jumbotron {
+      ),
+      backgroundImage &&
+        style(`.jumbotron {
       background-image: url("${backgroundImage}");
       background-size: cover;
       min-height: 75vh !important;
-    }`)),
-  wrapTop: (segment, ix, s)=>
-  ["hero", "footer"].includes(segment.type) ? s :
-  section(
-    {
-      class: [
-        "page-section",
-        ix === 0 && "mt-5",
-        segment.class,
-        segment.invertColor && "bg-primary"
-      ]
-    }, div(
-      { class: ["container"] },
-      div(
-        { class: "row" },
-        div({ class: "col-sm-12" }, s)
-      )
-    ))
+    }`)
+    ),
+  wrapTop: (segment, ix, s) =>
+    ["hero", "footer"].includes(segment.type)
+      ? s
+      : section(
+          {
+            class: [
+              "page-section",
+              ix === 0 && "mt-5",
+              segment.class,
+              segment.invertColor && "bg-primary"
+            ]
+          },
+          div(
+            { class: ["container"] },
+            div({ class: "row" }, div({ class: "col-sm-12" }, s))
+          )
+        )
 };
 const renderBody = (title, body, alerts) =>
   renderLayout(blockDispatch)(
     typeof body === "string" ? { type: "card", title, contents: body } : body
   );
-
 
 const wrap = ({
   title,
