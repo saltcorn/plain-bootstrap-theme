@@ -223,10 +223,26 @@ const blockDispatch = {
           )
         )
 };
+
+const makeSegments = (title, body, alerts) => {
+  const alertsSegments = alerts && alerts.length>0
+    ? [{ type: "blank", contents: alerts.map(a => alert(a.type, a.msg)) }]
+    : [];
+  if (typeof body === "string")
+    return {
+      above: [...alertsSegments, { type: "card", title, contents: body }]
+    };
+  else if (body.above) {
+    if (alerts&& alerts.length>0) body.above.unshift(alertsSegments[0]);
+    return body;
+  } else {
+    if (alerts&& alerts.length>0) return { above: [...alertsSegments, body] };
+    else return body;
+  }
+};
+
 const renderBody = (title, body, alerts) =>
-  renderLayout(blockDispatch)(
-    typeof body === "string" ? { type: "card", title, contents: body } : body
-  );
+  renderLayout(blockDispatch)(makeSegments(title, body, alerts));
 
 const wrap = ({
   title,
